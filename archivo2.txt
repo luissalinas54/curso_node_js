@@ -1,0 +1,4 @@
+Este es un archivo que estamos utilizando para poner a preba la
+sincronia y asicnronia a la hora
+de leer archivos o hacer otros 
+procesos
