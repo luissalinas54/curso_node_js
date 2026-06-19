@@ -1,4 +1,4 @@
-//APP PARA USAR LOS LISTADOS ls
+// APP PARA USAR LOS LISTADOS ls
 // const fs = require("node:fs");
 
 // fs.readdir(".", (err, files) => {
@@ -12,9 +12,9 @@
 //   });
 // });
 
-const fs = require("node:fs/promises");
+const fs = require('node:fs/promises');
 
-fs.readdir(".")
+fs.readdir('.')
   .then((files) => {
     files.forEach((file) => {
       console.log(file);
@@ -22,7 +22,6 @@ fs.readdir(".")
   })
   .catch((err) => {
     if (err) {
-      console.error("Error al leer el achivo", err);
-      return;
+      console.error('Error al leer el achivo', err);
     }
   });

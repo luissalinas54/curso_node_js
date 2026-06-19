@@ -1,7 +1,7 @@
-//PROGRAMA PRA USAR EL FILE SYSTEM FS
-const fs = require("node:fs");
+// PROGRAMA PRA USAR EL FILE SYSTEM FS
+const fs = require('node:fs');
 
-const stats = fs.statSync("./archivo.txt");
+const stats = fs.statSync('./archivo.txt');
 
 // console.log(
 //   stats.isFile(),
@@ -11,8 +11,8 @@ const stats = fs.statSync("./archivo.txt");
 // );
 
 console.log(`
-Archivo: ${stats.isFile() ? "Sí" : "No"}
-Directorio: ${stats.isDirectory() ? "Sí" : "No"}
-Enlace simbólico: ${stats.isSymbolicLink() ? "Sí" : "No"}
+Archivo: ${stats.isFile() ? 'Sí' : 'No'}
+Directorio: ${stats.isDirectory() ? 'Sí' : 'No'}
+Enlace simbólico: ${stats.isSymbolicLink() ? 'Sí' : 'No'}
 Tamaño: ${stats.size} bytes
 `);

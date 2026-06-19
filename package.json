@@ -1,0 +1,35 @@
+{
+  "name": "curso_node_js",
+  "version": "1.0.0",
+  "description": "Curso para aprender las bases de nodeJS",
+  "keywords": [
+    "Node",
+    "nodeJS",
+    "curso",
+    "junior"
+  ],
+  "homepage": "https://github.com/luissalinas54/curso_node_js#readme",
+  "bugs": {
+    "url": "https://github.com/luissalinas54/curso_node_js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luissalinas54/curso_node_js.git"
+  },
+  "license": "ISC",
+  "author": "Luis Alfredo Salinas Briceño",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "picocolors": "1.1.1"
+  },
+  "devDependencies": {
+    "semistandard": "17.0.0"
+  },
+  "eslintConfig": {
+    "extends": "semistandard"
+  }
+}
