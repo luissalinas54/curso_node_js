@@ -1,0 +1,30 @@
+// http://localhost:3000/ <----- en el navegador
+// set PORT=1234 && node 9.http.js <---- para cmd para poder declara el puerto que queremos utilizar
+// $env:PORT=1234; node 9.http.js  <---- para powershell para poder declara el puerto que queremos utilizar
+const http = require('node:http');
+
+const desiredPort = process.env.PORT ?? 3000; // OBTENEMOS EL PUERTO DESDE UNA VARIBLE DE ENTORNO, si no existe se usa el puerto 3000 por defecto.
+
+const processedRequest = (req, res) => {
+  // descriminamos para ver a que url de la primera ruta
+  if (req.url === '/') {
+    res.statusCode = 200; // OK
+    // COLOCAMOS LOS HEADERS DONDE PUEDE IR EL TYPO DE TEXTOS: PLANO O HTML
+    // SI COLOCAMOS HTML EN EL res.end PODEMOMAS MANADRA H1, DIV, ECT
+    // charset=utf-8 PARA COLOCAR ACENTOS Y Ñ
+    res.setHeader('Content-type', 'text/plain ; charset=utf-8');
+    res.end('Bienvenido a mi página de inicio');
+  }
+
+  // console.log('request recibida:', req.url);
+  // res.end('Hola mundo');
+};
+// CREAMOS EL SERVIDOR
+const server = http.createServer(processedRequest);
+
+server.listen(desiredPort, () => {
+  console.log(`Server listening on port http://localhost:${desiredPort}`);
+});
+
+// const mensaje = 'hola';
+// console.log(mensaje);
