@@ -22,9 +22,27 @@ const processRequest = (req, res) => {
     case 'POST':
       switch (url) {
         case '/pokemon': {
-          const body = '';
+          let body = '';
+          // Escuchamos el event data
+          req.on('data', chunck => {
+            // sumamos todos los chucnk(datos de info), porque la informacion (json)puede venir segmentada
+            body += chunck;
+          });
+          // Esperamos a que el evento termine y lance la call
+          req.on('end', () => {
+            const data = JSON.parse(body);
+            // llamar a una base de datos para guardar la info
+            res.writeHead(201, { 'Content-type': 'application/json; charset=utf-8' });
+            data.timestamp = Date.now;
+            res.end(JSON.stringify(data));
+          });
+
           break;
         }
+        default:
+          res.statusCode = 404;
+          res.setHeader('Content-type', 'text/plain; charset=utf-8');
+          return res.end('404 NOT FOUND');
       }
   }
 };
@@ -32,5 +50,5 @@ const processRequest = (req, res) => {
 const server = http.createServer(processRequest);
 
 server.listen(1234, () => {
-  console.log('Server listening on port ');
+  console.log('Server listening on port http://localhost:1234');
 });
