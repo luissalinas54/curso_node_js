@@ -10,7 +10,6 @@ Content-Type: application/json
     "type": "normal",
     "moves":[
         "transform"
-    ]
-        
+    ]      
     
 }
