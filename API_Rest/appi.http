@@ -1,0 +1,8 @@
+###recuperar todas las peliculas 
+GET http://localhost:1234/movies
+
+###RECUPERAR PELICULAS POR ID
+GET http://localhost:1234/movies/5ad1a235-0d9c-410a-b32b-220d91689a08
+
+### RECUPERAR PELICULAS POR GENERO
+GET http://localhost:1234/movies?genre=DRAMA 
