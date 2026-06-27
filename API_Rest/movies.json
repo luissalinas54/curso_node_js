@@ -29,16 +29,6 @@
   "rate": 8.8
 },
 {
-  "id": "241bf55d-b649-4109-af7c-0e6890ded3fc",
-  "title": "Pulp Fiction",
-  "year": 1994,
-  "director": "Quentin Tarantino",
-  "duration": 154,
-  "poster": "https://www.themoviedb.org/t/p/original/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
-  "genre": ["Crime", "Drama"],
-  "rate": 8.9
-},
-{
   "id": "9e6106f0-848b-4810-a11a-3d832a5610f9",
   "title": "Forrest Gump",
   "year": 1994,
