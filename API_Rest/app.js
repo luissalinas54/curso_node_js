@@ -11,12 +11,25 @@ const app = express();
 app.use(express.json());
 app.disable('x-powered-by');
 
+// CREAMOS EL CONTENEDOR DE URLS CON ACCESO A LOS RECURSOS DEL ORIGEN
+const ACCEPTED_ORIGINS = [
+  'http://localhost:1234',
+  'http://localhost:8080',
+  'http://movies.com'
+];
+
 app.get('/', (req, res) => {
   res.json({ message: 'hola mudo' });
 });
 
 // To dos los recursos que sean movies se identifica con /movies
 app.get('/movies', (req, res) => {
+  const origin = req.header('origin');
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+    // Agregamos la cabecera para permitir el acceso a una url, si colocamos * das acceso a todas las url
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
   // creamos filtro para el genero
   const { genre } = req.query;
   if (genre) {
@@ -58,6 +71,25 @@ app.post('/movies', (req, res) => {
   res.status(201).json(newMovie); // Actulizar cache del cliente
 });
 
+// METODO PARA ELIMINAR UNA MOVIE
+app.delete('/movies/:id', (req, res) => {
+  const origin = req.header('origin');
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  const { id } = req.params;
+  const movieIndex = movies.findIndex(movie => movie.id === id);
+
+  if (movieIndex === -1) {
+    return res.status(400).json({ message: 'Movie not found' });
+  }
+
+  movies.splice(movieIndex, 1);
+
+  return res.json({ message: 'Movie deleted' });
+});
+
 // ACTUALIZAMOS UN DATO DE LA PELICULS
 app.patch('/movies/:id', (req, res) => {
   const result = validateMoviesPartial(req.body); // obtenemos los parametros del body enviado por el cliente (request)
@@ -85,6 +117,16 @@ app.patch('/movies/:id', (req, res) => {
   return res.json(updateMovie);
 });
 
+// optios es la opcion que se necesita para ejecutar los mentodos PUT, POST, PATCH. DELETE
+app.options('/movies/:id', (req, res) => {
+  const origin = req.header('origin');
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    // colocamos todos los metodo que pueden acceder a options
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  }
+  res.send(200);
+});
 app.listen(PORT, () => {
   console.log('Server listening on port http://localhost:1234');
 });
