@@ -1,14 +1,27 @@
-const express = require('express');
-const crypto = require('node:crypto'); // <-- Para crear ids
-const movies = require('./movies.json');
-const { validateMovie, validateMoviesPartial } = require('./schemas/movies');
+import express, { json } from 'express';
+import { randomUUID } from 'node:crypto'; // <-- Para crear ids
+
+import { validateMovie, validateMoviesPartial } from './schemas/movies.js';
+import { readJSON } from './utils.js';
+
+// Como leer un json en ESModules
+// import fs from 'node:fs';
+// const movies = JSON.parse(fs.readFileSync('./movies.json', 'utf-8'));
+
+// import del futuro
+// import movies form './movies.json' with {type : 'json'};
+
+// import { type } from 'node:os';
 // const { json } = require('zod');
 
+const movies = readJSON('./movies.json');
+
+// Puerto para la url
 const PORT = process.env.PORT ?? 1234;
 const app = express();
 
 // Middleware para poder usar el req.body
-app.use(express.json());
+app.use(json());
 app.disable('x-powered-by');
 
 // CREAMOS EL CONTENEDOR DE URLS CON ACCESO A LOS RECURSOS DEL ORIGEN
@@ -61,7 +74,7 @@ app.post('/movies', (req, res) => {
   }
   // CREAMOS EL OBJETO DE LA NEW MOVIE
   const newMovie = {
-    id: crypto.randomUUID(), // universal unique identifier v4
+    id: randomUUID(), // universal unique identifier v4
     ...result.data // Aqui obtenemos todos los datos validados
   };
 

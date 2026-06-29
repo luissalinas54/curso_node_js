@@ -1,7 +1,6 @@
 // CON ESTE ESQUEMA VALIDAMOS QUE LOS DATOS DENTRO DE MOVIES
 // SEAN ENVIADOS CORRECTAMENTE
-
-const z = require('zod');
+import z from 'zod';
 
 const movieSchema = z.object({
   title: z.string({
@@ -25,14 +24,10 @@ const movieSchema = z.object({
 });
 
 // Aqui validamos si el object Movie es correcto
-function validateMovie (object) {
+export function validateMovie (object) {
   return movieSchema.safeParse(object); // <---- te dice si hay un error  hay datos
 }
 
-function validateMoviesPartial (objetc) {
+export function validateMoviesPartial (objetc) {
   return movieSchema.partial().safeParse(objetc); // partial hace opcional a acada una de las opciones de movie
 }
-
-module.exports = {
-  validateMovie, validateMoviesPartial
-};
