@@ -1,9 +1,6 @@
 import express, { json } from 'express';
-import { randomUUID } from 'node:crypto'; // <-- Para crear ids
-
-import { validateMovie, validateMoviesPartial } from './schemas/movies.js';
-import { readJSON } from './utils.js';
-
+import { moviesRouter } from './routes/movies.js';
+import { corsMiddleware } from './middlewares/cors.js';
 // Como leer un json en ESModules
 // import fs from 'node:fs';
 // const movies = JSON.parse(fs.readFileSync('./movies.json', 'utf-8'));
@@ -13,8 +10,7 @@ import { readJSON } from './utils.js';
 
 // import { type } from 'node:os';
 // const { json } = require('zod');
-
-const movies = readJSON('./movies.json');
+// console.log('Estoy ejecutando:', import.meta.url);
 
 // Puerto para la url
 const PORT = process.env.PORT ?? 1234;
@@ -22,124 +18,11 @@ const app = express();
 
 // Middleware para poder usar el req.body
 app.use(json());
+app.use(corsMiddleware());
 app.disable('x-powered-by');
 
-// CREAMOS EL CONTENEDOR DE URLS CON ACCESO A LOS RECURSOS DEL ORIGEN
-const ACCEPTED_ORIGINS = [
-  'http://localhost:1234',
-  'http://localhost:8080',
-  'http://movies.com'
-];
+app.use('/movies', moviesRouter);
 
-app.get('/', (req, res) => {
-  res.json({ message: 'hola mudo' });
-});
-
-// To dos los recursos que sean movies se identifica con /movies
-app.get('/movies', (req, res) => {
-  const origin = req.header('origin');
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    // Agregamos la cabecera para permitir el acceso a una url, si colocamos * das acceso a todas las url
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-
-  // creamos filtro para el genero
-  const { genre } = req.query;
-  if (genre) {
-    const filterMovies = movies.filter(
-      movie => movie.genre.some(g => g.toLowerCase() === genre.toLowerCase())
-    );
-    return res.json(filterMovies);
-  }
-
-  res.json(movies);
-});
-
-// segmento dinamico/paramentro de url
-app.get('/movies/:id', (req, res) => { // path-to-regex
-  // aqui recuperamos el parametro
-  const { id } = req.params;
-  const movie = movies.find(movie => movie.id === id);
-  if (movie) return res.json(movie);
-  res.status(404).json({ message: 'Movie not found' });
-});
-
-// creamos la movie
-app.post('/movies', (req, res) => {
-  const result = validateMovie(req.body);
-  console.log(result);
-
-  if (result.error) {
-    return res.status(400).json({ error: JSON.parse(result.error.message) });
-  }
-  // CREAMOS EL OBJETO DE LA NEW MOVIE
-  const newMovie = {
-    id: randomUUID(), // universal unique identifier v4
-    ...result.data // Aqui obtenemos todos los datos validados
-  };
-
-  // ESTO NO ES REST PORQUE ETSAMOS GUARDANDO EL ESTADO DE LA APLICACION EN MEMORIA
-  movies.push(newMovie);
-  // Indicamos que ya se creo el recurso
-  res.status(201).json(newMovie); // Actulizar cache del cliente
-});
-
-// METODO PARA ELIMINAR UNA MOVIE
-app.delete('/movies/:id', (req, res) => {
-  const origin = req.header('origin');
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-
-  const { id } = req.params;
-  const movieIndex = movies.findIndex(movie => movie.id === id);
-
-  if (movieIndex === -1) {
-    return res.status(400).json({ message: 'Movie not found' });
-  }
-
-  movies.splice(movieIndex, 1);
-
-  return res.json({ message: 'Movie deleted' });
-});
-
-// ACTUALIZAMOS UN DATO DE LA PELICULS
-app.patch('/movies/:id', (req, res) => {
-  const result = validateMoviesPartial(req.body); // obtenemos los parametros del body enviado por el cliente (request)
-
-  if (!result.success) {
-    return res.status(400).json({ error: JSON.parse(result.error.message) });
-  }
-  const { id } = req.params;
-  const movieIndex = movies.findIndex(movie => movie.id === id);
-
-  if (movieIndex === -1) { // confirmamos que existe el indice de la pelicula
-    return res.status(404).json({ message: 'Movie not found' });
-  }
-  // ACTUALIZAMOS LA PELICULA
-  const updateMovie = {
-    // aqui evaluamos el indice movie[1,2,3...]
-    ...movies[movieIndex], // obtenermos todas las propiedades del objeto movie original
-    ...result.data // reemplaza las propiedades modificdas
-  };
-
-  // Guardamso la pelicula en el indice
-  movies[movieIndex] = updateMovie;
-
-  // DEVOLVEMOS EL JSON DE LA PELICULA ACTUALIZADA
-  return res.json(updateMovie);
-});
-
-// optios es la opcion que se necesita para ejecutar los mentodos PUT, POST, PATCH. DELETE
-app.options('/movies/:id', (req, res) => {
-  const origin = req.header('origin');
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin);
-    // colocamos todos los metodo que pueden acceder a options
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-  }
-  res.send(200);
-});
 app.listen(PORT, () => {
   console.log('Server listening on port http://localhost:1234');
 });
